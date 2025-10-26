@@ -5,6 +5,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +31,35 @@ import com.liskovsoft.smartyoutubetv2.tv.presenter.base.LongClickPresenter;
 import com.liskovsoft.smartyoutubetv2.tv.ui.browse.video.GridFragmentHelper;
 import com.liskovsoft.smartyoutubetv2.tv.ui.widgets.complexcardview.ComplexImageCardView;
 import com.liskovsoft.smartyoutubetv2.tv.util.ViewUtil;
+import com.liskovsoft.smartyoutubetv2.tv.services.TMDBImageService;
+import com.liskovsoft.smartyoutubetv2.tv.services.TMDBImageCallback;
+import com.liskovsoft.smartyoutubetv2.tv.services.TMDBDetailedMovieInfo;
+import com.liskovsoft.smartyoutubetv2.tv.services.TMDBDataCache;
+import com.liskovsoft.smartyoutubetv2.tv.presenters.MovieDetailsVideoActionPresenter;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+// Data class to store movie details for each card
+class MovieDetails {
+    String title;
+    String overview;
+    String poster;
+    String rating;
+    String releaseDate;
+    TMDBDetailedMovieInfo detailedInfo;
+
+    MovieDetails(String title, String overview, String poster, String rating, String releaseDate) {
+        this.title = title;
+        this.overview = overview;
+        this.poster = poster;
+        this.rating = rating;
+        this.releaseDate = releaseDate;
+    }
+    
+    void setDetailedInfo(TMDBDetailedMovieInfo detailedInfo) {
+        this.detailedInfo = detailedInfo;
+    }
+}
 
 /*
  * A CardPresenter is used to generate Views and bind Objects to them on demand.
@@ -43,6 +75,14 @@ public class VideoCardPresenter extends LongClickPresenter {
     private int mThumbQuality;
     private int mWidth;
     private int mHeight;
+    private TMDBImageService mTMDBService;
+    
+    // Request management for preventing duplicate TMDB calls
+    private static final ConcurrentHashMap<String, AtomicInteger> sRequestCounters = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, String> sRequestCache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, String> sBackdropCache = new ConcurrentHashMap<>();
+    private static final Handler sHandler = new Handler(Looper.getMainLooper());
+    private static final long DEBOUNCE_DELAY_MS = 100; // 100ms debounce for faster response
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -66,11 +106,17 @@ public class VideoCardPresenter extends LongClickPresenter {
         float cardTextScrollSpeed = getCardTextScrollSpeed(context);
 
         updateDimensions(context);
+        
+        // Initialize TMDB service with memory optimizations
+        if (mTMDBService == null) {
+            mTMDBService = new TMDBImageService();
+        }
 
         ComplexImageCardView cardView = new ComplexImageCardView(context) {
             @Override
             public void setSelected(boolean selected) {
                 updateCardBackgroundColor(this, selected);
+                updateCardSelectionStyle(this, selected);
                 super.setSelected(selected);
             }
         };
@@ -82,15 +128,17 @@ public class VideoCardPresenter extends LongClickPresenter {
         cardView.setFocusable(true);
         cardView.setFocusableInTouchMode(true);
         cardView.enableBadge(isBadgeEnabled());
-        cardView.enableTitle(isTitleEnabled());
-        cardView.enableContent(isContentEnabled());
-        updateCardBackgroundColor(cardView, false);
+        // Disable title and content - just show image skeleton
+        cardView.enableTitle(false);
+        cardView.enableContent(false);
+        
+        // Add Netflix-like styling
+        setupCardStyling(cardView);
         return new ViewHolder(cardView);
     }
 
     private void updateCardBackgroundColor(ComplexImageCardView view, boolean selected) {
         int backgroundColor = selected ? mSelectedBackgroundColor : mDefaultBackgroundColor;
-        int textColor = selected ? mSelectedTextColor : mDefaultTextColor;
 
         // Both background colors should be set because the view's
         // background is temporarily visible during animations.
@@ -100,13 +148,46 @@ public class VideoCardPresenter extends LongClickPresenter {
             infoField.setBackgroundColor(backgroundColor);
         }
 
-        TextView titleText = view.findViewById(R.id.title_text);
-        if (titleText != null) {
-            titleText.setTextColor(textColor);
+        // Text color updates removed since we're not showing title/content
+    }
+
+    private void setupCardStyling(ComplexImageCardView view) {
+        // Add elevation for depth
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            view.setElevation(8f);
         }
-        TextView contentText = view.findViewById(R.id.content_text);
-        if (contentText != null) {
-            contentText.setTextColor(textColor);
+        // Set rectangular background
+        view.setBackgroundColor(mDefaultBackgroundColor);
+    }
+
+    private void updateCardSelectionStyle(ComplexImageCardView view, boolean selected) {
+        if (selected) {
+            // Add bold white border for selection
+            view.setBackgroundResource(R.drawable.card_selected_border);
+            // Increase elevation when selected
+            if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                view.setElevation(20f);
+            }
+            // Ensure the border is visible by setting padding
+            view.setPadding(8, 8, 8, 8);
+            // Slightly enlarge the image for focus effect
+            view.getMainImageView().setScaleX(1.05f);
+            view.getMainImageView().setScaleY(1.05f);
+            // Force a redraw to ensure the border is visible
+            view.invalidate();
+        } else {
+            // Use rectangular background when not selected
+            view.setBackgroundColor(mDefaultBackgroundColor);
+            // Reset elevation and padding
+            if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                view.setElevation(8f);
+            }
+            view.setPadding(0, 0, 0, 0);
+            // Reset image scale to normal
+            view.getMainImageView().setScaleX(1.0f);
+            view.getMainImageView().setScaleY(1.0f);
+            // Force a redraw
+            view.invalidate();
         }
     }
 
@@ -119,8 +200,9 @@ public class VideoCardPresenter extends LongClickPresenter {
         ComplexImageCardView cardView = (ComplexImageCardView) viewHolder.view;
         Context context = cardView.getContext();
 
-        cardView.setTitleText(video.getTitle());
-        cardView.setContentText(video.getSecondTitle());
+        // Remove title and content text to use full space for image
+        // cardView.setTitleText(video.getTitle());
+        // cardView.setContentText(video.getSecondTitle());
         // Count progress that very close to zero. E.g. when user closed video immediately.
         cardView.setProgress(video.percentWatched > 0 && video.percentWatched < 1 ? 1 : Math.round(video.percentWatched));
         cardView.setBadgeText(
@@ -144,25 +226,154 @@ public class VideoCardPresenter extends LongClickPresenter {
             return;
         }
 
+        // Optimized TMDB image loading with debouncing and caching
+        String videoTitle = video.getTitle();
+        String cacheKey = videoTitle.toLowerCase().trim();
+        
+        // CRITICAL: Check SQLite persistent cache FIRST (survives restarts)
+        String cachedPosterUrl = null;
+        String cachedBackdropUrl = null;
+        
+        if (video.videoId != null) {
+            TMDBDataCache persistentCache = TMDBDataCache.instance(context);
+            cachedPosterUrl = persistentCache.getPosterUrl(video.videoId);
+            cachedBackdropUrl = persistentCache.getBackdropUrl(video.videoId);
+            
+            // Also check in-memory cache as fallback
+            if (cachedBackdropUrl == null) {
+                cachedBackdropUrl = sBackdropCache.get(cacheKey);
+            }
+        } else {
+            // Fallback to in-memory cache if no video ID
+            cachedBackdropUrl = sBackdropCache.get(cacheKey);
+        }
+        
+        // Check in-memory cache for fast lookup
+        String cachedImageUrl = sRequestCache.get(cacheKey);
+        if (cachedImageUrl != null && cachedPosterUrl == null) {
+            cachedPosterUrl = cachedImageUrl;
+        }
+        
+        if (cachedPosterUrl != null) {
+            // Use cached result immediately - FAST PATH
+            if (cachedBackdropUrl != null) {
+                video.backdropImageUrl = cachedBackdropUrl;
+            }
+            loadImageWithGlide(context, cardView, video, cachedPosterUrl);
+            return;
+        }
+        
+        // Get or create request counter for this title
+        AtomicInteger requestCounter = sRequestCounters.computeIfAbsent(cacheKey, k -> new AtomicInteger(0));
+        int currentRequestId = requestCounter.incrementAndGet();
+        
+        // Debounce requests - only proceed if this is still the latest request
+        sHandler.postDelayed(() -> {
+            if (requestCounter.get() != currentRequestId) {
+                // A newer request was made, cancel this one
+                return;
+            }
+            
+            // Make TMDB API call - pass description for TMDB ID lookup
+            // Try to get description from multiple sources
+            String videoDescription = video.description;
+            
+            // If description is null, try to get it from mediaItem metadata
+            if ((videoDescription == null || videoDescription.isEmpty()) && video.mediaItem != null) {
+                try {
+                    // Check if mediaItem has a method to get description
+                    if (video.mediaItem instanceof com.liskovsoft.mediaserviceinterfaces.data.MediaItemMetadata) {
+                        com.liskovsoft.mediaserviceinterfaces.data.MediaItemMetadata metadata = 
+                            (com.liskovsoft.mediaserviceinterfaces.data.MediaItemMetadata) video.mediaItem;
+                        videoDescription = metadata.getDescription();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error getting description from mediaItem", e);
+                }
+            }
+            
+            Log.d(TAG, "Video title: " + videoTitle + ", description length: " + (videoDescription != null ? videoDescription.length() : "null"));
+            mTMDBService.getMoviePosterByTitle(videoTitle, videoDescription, new TMDBImageCallback() {
+                @Override
+                public void onImageUrlReceived(String imageUrl) {
+                    // Check if this is still the latest request
+                    if (requestCounter.get() != currentRequestId) {
+                        return; // Cancel if newer request exists
+                    }
+                    
+                    // Cache the result in BOTH in-memory AND SQLite
+                    if (imageUrl != null) {
+                        sRequestCache.put(cacheKey, imageUrl);
+                        
+                        // CRITICAL: Persist to SQLite to survive app restarts
+                        if (video.videoId != null) {
+                            TMDBDataCache.instance(context).storePosterUrl(video.videoId, imageUrl);
+                        }
+                    }
+                    
+                    // Run on main thread for UI updates
+                    cardView.post(() -> {
+                        if (requestCounter.get() != currentRequestId) {
+                            return; // Double-check on main thread
+                        }
+                        loadImageWithGlide(context, cardView, video, imageUrl);
+                    });
+                }
+                
+                @Override
+                public void onBackdropUrlReceived(String backdropUrl) {
+                    if (backdropUrl != null && !backdropUrl.isEmpty()) {
+                        video.backdropImageUrl = backdropUrl;
+                        // Cache the backdrop URL in BOTH in-memory AND SQLite
+                        sBackdropCache.put(cacheKey, backdropUrl);
+                        
+                        // CRITICAL: Persist backdrop URL to SQLite to survive app restarts
+                        if (video.videoId != null) {
+                            TMDBDataCache.instance(context).storeBackdropUrl(video.videoId, backdropUrl);
+                        }
+                    }
+                }
+                
+                @Override
+                public void onMovieDetailsReceived(String title, String overview, String poster, String rating, String releaseDate) {
+                    MovieDetails movieDetails = new MovieDetails(title, overview, poster, rating, releaseDate);
+                    cardView.setTag(movieDetails);
+                    
+                    if (poster != null && !poster.isEmpty()) {
+                        video.cardImageUrl = poster;
+                    }
+                }
+                
+                @Override
+                public void onDetailedMovieInfoReceived(TMDBDetailedMovieInfo detailedInfo) {
+                    if (detailedInfo != null) {
+                        MovieDetailsVideoActionPresenter.storeDetailedMovieInfo(video.videoId, detailedInfo);
+                    }
+                }
+            });
+        }, DEBOUNCE_DELAY_MS);
+        
+        // Store video reference for click handling
+        cardView.setTag(video);
+    }
+    
+    private void loadImageWithGlide(Context context, ComplexImageCardView cardView, Video video, String imageUrl) {
+        String finalImageUrl = imageUrl != null ? imageUrl : ClickbaitRemover.updateThumbnail(video, mThumbQuality);
+        
         Glide.with(context)
-                //.asBitmap() // disable animation (webp, gif)
-                .load(ClickbaitRemover.updateThumbnail(video, mThumbQuality))
-                //.placeholder(mDefaultCardImage)
+                .load(finalImageUrl)
                 .apply(ViewUtil.glideOptions())
-                // improve image compression on low end devices
-                .override(mWidth, mHeight)
-                // com.liskovsoft.smartyoutubetv2.tv.util.CacheGlideModule
-                // Cache makes app crashing on old android versions
-                .diskCacheStrategy(VERSION.SDK_INT > 21 ? DiskCacheStrategy.ALL : DiskCacheStrategy.NONE)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
                 .listener(mErrorListener)
                 .error(
-                    // Updated thumbnail url not found
                     Glide.with(context)
-                        .load(video.cardImageUrl) // always working
-                        //.placeholder(mDefaultCardImage)
+                        .load(ClickbaitRemover.updateThumbnail(video, mThumbQuality))
                         .apply(ViewUtil.glideOptions())
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .skipMemoryCache(false)
                         .listener(mErrorListener)
-                        .error(R.drawable.card_placeholder) // R.color.lb_grey
+                        .error(R.drawable.card_placeholder)
                 )
                 .into(cardView.getMainImageView());
     }
@@ -177,8 +388,9 @@ public class VideoCardPresenter extends LongClickPresenter {
         cardView.setBadgeImage(null);
         cardView.setMainImage(null);
 
-        // Cleanup Glide resources. https://chatgpt.com/share/682120c5-e428-8010-b848-371b2dec0cd5
-        Glide.with(cardView.getContext().getApplicationContext()).clear(cardView.getMainImageView());
+        // DON'T clear Glide cache - this causes images to reload when navigating back
+        // The images will stay cached and load instantly when you return
+        // Glide.with(cardView.getContext().getApplicationContext()).clear(cardView.getMainImageView());
     }
 
     private void updateDimensions(Context context) {
@@ -253,4 +465,5 @@ public class VideoCardPresenter extends LongClickPresenter {
             return false;
         }
     };
+    
 }

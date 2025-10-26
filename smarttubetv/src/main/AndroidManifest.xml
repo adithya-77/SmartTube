@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.liskovsoft.smartyoutubetv2.tv">
+          >
 
     <!-- Shield on Android 11 speech recognizer not working fix? -->
     <!-- https://stackoverflow.com/questions/64319117/speechrecognizer-not-available-when-targeting-android-11 -->
@@ -54,6 +54,9 @@
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
+        android:extractNativeLibs="true"
+        android:allowNativeHeapPointerTagging="false"
         android:banner="@mipmap/app_banner"
         android:logo="@mipmap/app_logo"
         android:icon="@mipmap/app_icon"
@@ -182,6 +185,12 @@
             android:screenOrientation="unspecified"/>
 
         <activity android:name="com.liskovsoft.smartyoutubetv2.tv.ui.signin.SignInActivity"
+                  android:launchMode="singleInstance"
+                  android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
+                  android:screenOrientation="unspecified"
+                  android:theme="@style/App.Theme.Leanback.GuidedStep"/>
+
+        <activity android:name="com.liskovsoft.smartyoutubetv2.tv.ui.moviedetails.MovieDetailsActivity"
                   android:launchMode="singleInstance"
                   android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
                   android:screenOrientation="unspecified"

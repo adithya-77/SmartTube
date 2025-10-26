@@ -17,6 +17,7 @@ import androidx.leanback.widget.VerticalGridView;
 import com.liskovsoft.smartyoutubetv2.common.app.models.data.Video;
 import com.liskovsoft.smartyoutubetv2.common.app.models.data.VideoGroup;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.BrowsePresenter;
+import com.liskovsoft.smartyoutubetv2.tv.presenters.MovieDetailsVideoActionPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.interfaces.VideoGroupPresenter;
 import com.liskovsoft.smartyoutubetv2.common.misc.TickleManager;
 import com.liskovsoft.smartyoutubetv2.common.prefs.MainUIData;
@@ -397,7 +398,9 @@ public class MultiVideoGridFragment extends MultiGridFragment implements VideoSe
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
 
             if (item instanceof Video) {
-                mMainPresenter.onVideoItemClicked((Video) item);
+                // Use custom presenter to open movie details instead of direct playback
+                android.util.Log.d("MultiVideoGridFragment", "Opening movie details for: " + ((Video) item).getTitle());
+                MovieDetailsVideoActionPresenter.instance(getContext()).apply((Video) item);
             } else {
                 Toast.makeText(getActivity(), item.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -409,7 +412,9 @@ public class MultiVideoGridFragment extends MultiGridFragment implements VideoSe
         public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item,
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
             if (item instanceof Video) {
-                mMainPresenter.onVideoItemClicked((Video) item);
+                // Use custom presenter to open movie details instead of direct playback
+                android.util.Log.d("MultiVideoGridFragment", "Opening movie details for: " + ((Video) item).getTitle());
+                MovieDetailsVideoActionPresenter.instance(getContext()).apply((Video) item);
             }
         }
     }

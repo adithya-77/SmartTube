@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    
+    <!-- Bold white border -->
+    <stroke
+        android:width="3dp"
+        android:color="#FFFFFF" />
+    
+    <!-- Transparent background to show the image -->
+    <solid android:color="@android:color/transparent" />
+    
+    <!-- Rectangular corners -->
+    <corners android:radius="0dp" />
+    
+</shape>

@@ -65,8 +65,9 @@ public final class ProgressBarManager {
         ProgressBar progressBarView = new ProgressBar(
                 rootView.getContext(), null, android.R.attr.progressBarStyleLarge);
         progressBarView.setIndeterminate(true);
+        // Use modern red circular progress indicator
         progressBarView.setIndeterminateDrawable(
-                ContextCompat.getDrawable(rootView.getContext(), R.drawable.progress_large_holo));
+                ContextCompat.getDrawable(rootView.getContext(), R.drawable.progress_circular_red));
 
         FrameLayout.LayoutParams progressBarParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT,

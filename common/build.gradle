@@ -3,10 +3,19 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.android.library'
 
 android {
-    // FIX: Default interface methods are only supported starting with Android N (--min-api 24)
+    namespace 'com.liskovsoft.smartyoutubetv2.common'
+    
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    buildFeatures {
+        buildConfig true
     }
 
     compileSdkVersion project.properties.compileSdkVersion
@@ -22,8 +31,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
 
-        // More info: http://myhexaville.com/2017/03/10/android-multidex/
-        // Additionally, you should extend your application from MultiDexApplication
         multiDexEnabled = true
     }
 
@@ -34,8 +41,6 @@ android {
         }
     }
 
-    // gradle 4.6 migration: disable dimensions mechanism
-    // more: https://proandroiddev.com/advanced-android-flavors-part-4-a-new-version-fc2ad80c01bb
     flavorDimensions "default"
 
     productFlavors {
@@ -67,35 +72,18 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:' + rxAndroidVersion
     implementation 'io.reactivex.rxjava2:rxjava:' + rxJavaVersion
 
-    //////// BEGIN EXOPLAYER /////////
-
     implementation project(':exoplayer-library')
     implementation project(':exoplayer-extension-okhttp')
     implementation project(':exoplayer-extension-cronet')
 
-    // implementation 'com.amazon.android:exoplayer:' + amazonExoplayerVersion
-    // implementation 'com.amazon.android:extension-okhttp:' + amazonExoplayerVersion
-
-    // implementation 'com.google.android.exoplayer:exoplayer:' + exoplayerVersion
-    // implementation 'com.google.android.exoplayer:extension-okhttp:' + exoplayerVersion
-
-    // implementation 'com.github.amzn:exoplayer-amazon-port:' + amazonExoplayerJitpackVersion
-
-    //////// END EXOPLAYER //////////
-
-    implementation 'androidx.media:media:' + mediaXLibraryVersion // exoplayer fix
-
+    implementation 'androidx.media:media:' + mediaXLibraryVersion
     implementation 'com.github.bumptech.glide:glide:' + glideVersion
-
     implementation 'androidx.work:work-runtime:' + workVersion
-    implementation 'com.google.guava:guava:' + guavaVersion // Work library deps
-
+    implementation 'com.google.guava:guava:' + guavaVersion
     implementation 'androidx.browser:browser:' + browserXVersion
-
     implementation 'androidx.core:core-ktx:' + kotlinCoreXVersion
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlinVersion
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:' + kotlinxVersion
-
     implementation 'com.jakewharton:process-phoenix:' + phoenixVersion
 
     stbetaImplementation project(':leanbackassistant')

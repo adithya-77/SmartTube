@@ -19,6 +19,65 @@
     <string name="buy_2">AT $9.99</string>
     <string name="queue_name">Play Queue</string>
 
+    <!-- Missing strings -->
+    <string name="badge_new_content">NEW CONTENT</string>
+    <string name="badge_live">LIVE</string>
+    <string name="header_shorts">Shorts</string>
+    <string name="content_type_channel">Channel</string>
+    <string name="disable_mic_permission">Please disable microphone access for the app in order for this recognizer to work properly.</string>
+    <string name="signin_view_title">User Code is loading…</string>
+    <string name="signin_view_description">To sign-in enter this code on page %s\nNOTE. Works only with Firefox or Chrome browsers.</string>
+    <string name="signin_view_action_text">Done</string>
+    <string name="add_device_view_description">To link the device enter this code on your phone\'s YouTube app in section Settings/Watch on TV\nNOTE: This only works with the Gboard keyboard!</string>
+    <string name="msg_press_again_to_exit">Press again to exit</string>
+    <string name="require_checked">Requires \"%s\"</string>
+    <string name="player_ending_time">Ends at %s</string>
+    <string name="player_remaining_time">Remaining: %s</string>
+    <string name="lb_playback_controls_skip_next">Skip Next</string>
+    <string name="lb_playback_controls_skip_previous">Skip Previous/Rewind to start position</string>
+    <string name="settings_accounts">Accounts</string>
+    <string name="settings_language_country">Language/Country</string>
+    <string name="return_to_background_video">Return to video running in background</string>
+    <string name="dialog_account_none">None</string>
+    <string name="enter_settings_password">Enter settings password</string>
+    <string name="you_liked">you liked</string>
+    <string name="login_from_browser">Login from browser</string>
+    
+    <!-- Additional missing strings -->
+    <string name="video_rotate">Rotate</string>
+    <string name="video_flip">Flip (mirror)</string>
+    <string name="screen_dimming">Screen dimming</string>
+    <string name="player_tweaks">Developer options</string>
+    <string name="action_playback_queue">Playback queue</string>
+    <string name="unsubscribed_from_channel">Unsubscribed</string>
+    <string name="subscribed_to_channel">Subscribed</string>
+    <string name="action_video_speed">Video speed</string>
+    <string name="action_like">Like</string>
+    <string name="playback_settings">Playback quality settings</string>
+    <string name="content_block_provider">Content blocking</string>
+    <string name="lb_playback_controls_closed_captioning_enable">Enable Closed Captioning</string>
+    <string name="lb_playback_controls_closed_captioning_disable">Disable Closed Captioning</string>
+    <string name="auto_frame_rate">Auto Frame Rate</string>
+    <string name="action_sound_off">Sound off</string>
+    <string name="action_channel">Open channel</string>
+    <string name="share_link">Share link</string>
+    <string name="action_playlist_add">Add to playlist</string>
+    <string name="action_playlist_remove">Remove from playlist</string>
+    <string name="repeat_mode_none">Stop playback after one video</string>
+    <string name="repeat_mode_one">Repeat current video</string>
+    <string name="repeat_mode_all">Play videos continuously</string>
+    <string name="repeat_mode_pause">Pause playback after each video</string>
+    <string name="repeat_mode_pause_alt">Play only playlist videos continuously</string>
+    <string name="repeat_mode_shuffle">Shuffle any playlist</string>
+    <string name="repeat_mode_reverse_list">Play the playlist or channel videos in reverse order</string>
+    <string name="action_video_info">Video description</string>
+    <string name="seek_interval">Seek interval</string>
+    <string name="run_in_background">Background playback</string>
+    <string name="video_aspect">Aspect ratio</string>
+    <string name="open_chat">Chat/Comments</string>
+    <string name="action_search">Search</string>
+    <string name="action_dislike">Dislike</string>
+
     <string name="search_results">Search results for \'%1$s\'</string>
     <string name="no_search_results">No search results found for \'%1$s\'</string>
     <string name="catalog_url">https://storage.googleapis.com/android-tv/android_tv_videos_new.json</string>

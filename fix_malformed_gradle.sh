@@ -1,0 +1,179 @@
+#!/bin/bash
+
+echo "Fixing malformed build.gradle files..."
+
+# Fix common build.gradle
+cat > common/build.gradle << 'EOF'
+apply from: gradle.ext.sharedModulesConstants
+apply plugin: 'kotlin-android'
+apply plugin: 'com.android.library'
+
+android {
+    namespace 'com.liskovsoft.smartyoutubetv2.common'
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    compileSdkVersion project.properties.compileSdkVersion
+    buildToolsVersion project.properties.buildToolsVersion
+    testOptions.unitTests.includeAndroidResources = true
+
+    defaultConfig {
+        minSdkVersion project.properties.minSdkVersion
+        targetSdkVersion project.properties.targetSdkVersion
+        versionCode 10
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+
+        multiDexEnabled = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "default"
+
+    productFlavors {
+        stbeta {}
+        ststable {}
+        storig {}
+        strtarmenia {}
+        stbolshoetv {}
+        stredboxtv {}
+        stsibsetru {}
+        stamazon {}
+        staptoide {}
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'androidx.appcompat:appcompat:' + appCompatXLibraryVersion
+    testImplementation 'junit:junit:' + junitVersion
+    testImplementation 'org.robolectric:robolectric:' + robolectricVersion
+
+    implementation project(':sharedutils')
+    implementation project(':fragment-1.1.0')
+    implementation project(':mediaserviceinterfaces')
+    implementation project(':youtubeapi')
+    implementation project(':filepicker-lib')
+
+    implementation 'io.reactivex.rxjava2:rxandroid:' + rxAndroidVersion
+    implementation 'io.reactivex.rxjava2:rxjava:' + rxJavaVersion
+
+    implementation project(':exoplayer-library')
+    implementation project(':exoplayer-extension-okhttp')
+    implementation project(':exoplayer-extension-cronet')
+
+    implementation 'androidx.media:media:' + mediaXLibraryVersion
+    implementation 'com.github.bumptech.glide:glide:' + glideVersion
+    implementation 'androidx.work:work-runtime:' + workVersion
+    implementation 'com.google.guava:guava:' + guavaVersion
+    implementation 'androidx.browser:browser:' + browserXVersion
+    implementation 'androidx.core:core-ktx:' + kotlinCoreXVersion
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlinVersion
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:' + kotlinxVersion
+    implementation 'com.jakewharton:process-phoenix:' + phoenixVersion
+
+    stbetaImplementation project(':leanbackassistant')
+    ststableImplementation project(':leanbackassistant')
+    storigImplementation project(':leanbackassistant')
+    staptoideImplementation project(':leanbackassistant')
+
+    stbetaImplementation project(':appupdatechecker2')
+    ststableImplementation project(':appupdatechecker2')
+    storigImplementation project(':appupdatechecker2')
+    strtarmeniaImplementation project(':appupdatechecker2')
+    stredboxtvImplementation project(':appupdatechecker2')
+    stsibsetruImplementation project(':appupdatechecker2')
+    stamazonImplementation project(':appupdatechecker2')
+    staptoideImplementation project(':appupdatechecker2')
+}
+
+apply from: 'custom-deps.gradle'
+EOF
+
+# Fix SharedModules/sharedutils build.gradle
+cat > SharedModules/sharedutils/build.gradle << 'EOF'
+apply from: '../constants.gradle'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.android.library'
+
+android {
+    namespace 'com.liskovsoft.sharedutils'
+    
+    compileSdkVersion project.ext.compileSdkVersion
+    buildToolsVersion project.ext.buildToolsVersion
+    testOptions.unitTests.includeAndroidResources = true
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    defaultConfig {
+        minSdkVersion project.ext.minSdkVersion
+        targetSdkVersion project.ext.targetSdkVersion
+        versionCode 3
+        versionName "0.3.1"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation 'junit:junit:' + junitVersion
+    testImplementation 'org.robolectric:robolectric:' + robolectricVersion
+
+    implementation 'androidx.appcompat:appcompat:' + appCompatXLibraryVersion
+    implementation 'androidx.annotation:annotation:' + annotationXLibraryVersion
+
+    implementation 'io.reactivex.rxjava2:rxandroid:' + rxAndroidVersion
+    implementation 'io.reactivex.rxjava2:rxjava:' + rxJavaVersion
+
+    implementation 'androidx.core:core-ktx:' + kotlinCoreXVersion
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlinVersion
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:' + kotlinxVersion
+
+    implementation 'com.squareup.okhttp3:okhttp:' + okhttpVersion
+    implementation 'com.squareup.okhttp3:logging-interceptor:' + okhttpVersion
+
+    implementation 'com.google.code.gson:gson:' + gsonVersion
+
+    implementation 'androidx.work:work-runtime:' + workVersion
+    implementation 'com.google.guava:guava:' + guavaVersion
+
+    implementation 'com.jakewharton:process-phoenix:' + phoenixVersion
+
+    implementation 'androidx.browser:browser:' + browserXVersion
+}
+EOF
+
+echo "Malformed build.gradle files fixed!"

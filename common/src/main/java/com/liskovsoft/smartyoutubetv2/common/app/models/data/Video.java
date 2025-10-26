@@ -57,6 +57,7 @@ public final class Video {
     public String bgImageUrl;
     public String cardImageUrl;
     public String altCardImageUrl;
+    public String backdropImageUrl;
     public String author;
     public String badge;
     public String previewUrl;

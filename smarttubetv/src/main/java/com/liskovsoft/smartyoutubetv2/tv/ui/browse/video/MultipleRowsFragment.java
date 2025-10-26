@@ -28,6 +28,7 @@ import com.liskovsoft.smartyoutubetv2.tv.presenter.ShortsCardPresenter;
 import com.liskovsoft.smartyoutubetv2.tv.presenter.VideoCardPresenter;
 import com.liskovsoft.smartyoutubetv2.tv.presenter.CustomListRowPresenter;
 import com.liskovsoft.smartyoutubetv2.tv.presenter.base.OnItemLongPressedListener;
+import com.liskovsoft.smartyoutubetv2.tv.presenters.MovieDetailsVideoActionPresenter;
 import com.liskovsoft.smartyoutubetv2.tv.ui.browse.interfaces.VideoSection;
 import com.liskovsoft.smartyoutubetv2.tv.ui.common.LeanbackActivity;
 import com.liskovsoft.smartyoutubetv2.tv.ui.common.UriBackgroundManager;
@@ -90,6 +91,10 @@ public abstract class MultipleRowsFragment extends RowsSupportFragment implement
 
         if (mRowsAdapter == null) {
             mRowPresenter = new CustomListRowPresenter();
+            
+            // Enable header display for genre categorization
+            mRowPresenter.setHeaderPresenter(new androidx.leanback.widget.RowHeaderPresenter());
+            mRowPresenter.setSelectEffectEnabled(true);
 
             ClassPresenterSelector presenterSelector = new ClassPresenterSelector();
             presenterSelector.addClassPresenter(ListRow.class, mRowPresenter);
@@ -336,7 +341,9 @@ public abstract class MultipleRowsFragment extends RowsSupportFragment implement
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
 
             if (item instanceof Video) {
-                mMainPresenter.onVideoItemClicked((Video) item);
+                // Use custom presenter to open movie details instead of direct playback
+                android.util.Log.d("MultipleRowsFragment", "Opening movie details for: " + ((Video) item).getTitle());
+                MovieDetailsVideoActionPresenter.instance(getContext()).apply((Video) item);
             } else {
                 Toast.makeText(getActivity(), item.toString(), Toast.LENGTH_SHORT).show();
             }

@@ -23,7 +23,6 @@
     </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
     <!-- MOD: fix subs width issues on vertical videos by placing subs outside of the aspect layout -->
-    <!-- MOD: add subtitle padding -->
     <com.google.android.exoplayer2.ui.SubtitleView
         android:id="@+id/leanback_subtitles"
         android:layout_width="match_parent"
@@ -61,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|right"
         android:gravity="right"
-        android:padding="10sp">
+        android:padding="5dp">
         <!-- Global clock -->
         <com.liskovsoft.smartyoutubetv2.tv.ui.widgets.time.DateTimeView
             android:id="@+id/global_time"
@@ -96,7 +95,7 @@
     <FrameLayout android:id="@+id/debug_view_group"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:padding="4sp"
+                 android:padding="2dp"
                  android:visibility="gone"
                  android:layout_gravity="top|right"
                  android:background="#70000000"/>

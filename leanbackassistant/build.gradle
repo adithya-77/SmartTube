@@ -2,13 +2,15 @@ apply from: gradle.ext.sharedModulesConstants
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'com.liskovsoft.leanbackassistant'
+
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
     testOptions.unitTests.includeAndroidResources = true
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     defaultConfig {

@@ -72,14 +72,22 @@ public class SubtitleManager implements TextOutput, OnDataChange {
 
     @Override
     public void onCues(List<Cue> cues) {
+        android.util.Log.d("SubtitleManager", "onCues called with " + (cues != null ? cues.size() : "null") + " cues");
         if (mSubtitleView != null) {
+            android.util.Log.d("SubtitleManager", "Setting cues to SubtitleView, visibility: " + mSubtitleView.getVisibility());
             mSubtitleView.setCues(forceCenterAlignment(cues));
+        } else {
+            android.util.Log.w("SubtitleManager", "SubtitleView is null!");
         }
     }
 
     public void show(boolean show) {
+        android.util.Log.d("SubtitleManager", "show(" + show + ") called");
         if (mSubtitleView != null) {
             mSubtitleView.setVisibility(show ? View.VISIBLE : View.GONE);
+            android.util.Log.d("SubtitleManager", "SubtitleView visibility set to: " + mSubtitleView.getVisibility());
+        } else {
+            android.util.Log.w("SubtitleManager", "SubtitleView is null in show()!");
         }
     }
 
@@ -144,19 +152,23 @@ public class SubtitleManager implements TextOutput, OnDataChange {
                 applyStyle(subtitleStyle);
             }
 
-            mSubtitleView.setBottomPaddingFraction(mPlayerData.getSubtitlePosition());
+            // Move subtitles down by reducing the bottom padding fraction
+            float currentPosition = mPlayerData.getSubtitlePosition();
+            float adjustedPosition = currentPosition - 0.15f; // Subtract 15% to move subtitles down more
+            mSubtitleView.setBottomPaddingFraction(Math.max(adjustedPosition, 0.0f)); // Cap at 0% minimum
         }
     }
 
     private void applyStyle(SubtitleStyle subtitleStyle) {
-        int textColor = ContextCompat.getColor(mContext, subtitleStyle.subsColorResId);
-        int outlineColor = ContextCompat.getColor(mContext, R.color.black);
-        int backgroundColor = ContextCompat.getColor(mContext, subtitleStyle.backgroundColorResId);
+        // Force white text color for better visibility
+        int textColor = Color.WHITE;
+        int outlineColor = Color.BLACK; // Black outline for better contrast
+        int backgroundColor = Color.TRANSPARENT; // No background
 
         CaptionStyleCompat style =
                 new CaptionStyleCompat(textColor,
                         backgroundColor, Color.TRANSPARENT,
-                        subtitleStyle.captionStyle,
+                        CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW, // Add drop shadow
                         outlineColor, Typeface.DEFAULT_BOLD);
         mSubtitleView.setStyle(style);
 
@@ -170,13 +182,12 @@ public class SubtitleManager implements TextOutput, OnDataChange {
                 (CaptioningManager) mContext.getSystemService(Context.CAPTIONING_SERVICE);
 
         if (captioningManager != null) {
-            CaptionStyle userStyle = captioningManager.getUserStyle();
-
+            // Force white text color for better visibility
             CaptionStyleCompat style =
-                    new CaptionStyleCompat(userStyle.foregroundColor,
-                            userStyle.backgroundColor, VERSION.SDK_INT >= 21 ? userStyle.windowColor : Color.TRANSPARENT,
-                            userStyle.edgeType,
-                            userStyle.edgeColor, userStyle.getTypeface());
+                    new CaptionStyleCompat(Color.WHITE,
+                            Color.TRANSPARENT, Color.TRANSPARENT,
+                            CaptionStyleCompat.EDGE_TYPE_DROP_SHADOW,
+                            Color.BLACK, Typeface.DEFAULT_BOLD);
             mSubtitleView.setStyle(style);
 
             float textSizePx = getTextSizePx();

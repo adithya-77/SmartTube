@@ -45,11 +45,27 @@ public class TwoStateAction extends MultiAction {
 
         mContext = context;
         Drawable[] drawables = new Drawable[2];
-        BitmapDrawable offDrawable = (BitmapDrawable) ContextCompat.getDrawable(context, offIconResId);
+        Drawable offDrawable = ContextCompat.getDrawable(context, offIconResId);
         drawables[INDEX_OFF] = offDrawable;
-        drawables[INDEX_ON] = offDrawable == null ? null
-                : new BitmapDrawable(context.getResources(),
-                ActionHelpers.createBitmap(offDrawable.getBitmap(), highlightColor));
+        
+        if (offDrawable != null) {
+            if (offDrawable instanceof BitmapDrawable) {
+                // Handle bitmap drawables
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) offDrawable;
+                drawables[INDEX_ON] = new BitmapDrawable(context.getResources(),
+                        ActionHelpers.createBitmap(bitmapDrawable.getBitmap(), highlightColor));
+            } else {
+                // Handle vector drawables and other drawable types
+                // For vector drawables, we'll just use the same drawable for both states
+                // and apply color tinting if needed
+                drawables[INDEX_ON] = offDrawable.mutate();
+                if (highlightColor != 0) {
+                    drawables[INDEX_ON].setColorFilter(highlightColor, android.graphics.PorterDuff.Mode.SRC_IN);
+                }
+            }
+        } else {
+            drawables[INDEX_ON] = null;
+        }
         setDrawables(drawables);
 
         String[] labels = new String[drawables.length];

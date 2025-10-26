@@ -67,7 +67,7 @@ class TooltipPopup {
         mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mLayoutParams.format = PixelFormat.TRANSLUCENT;
-        mLayoutParams.windowAnimations = R.style.Animation_AppCompat_Tooltip;
+        // mLayoutParams.windowAnimations = R.style.Animation_AppCompat_Tooltip;
         mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
     }

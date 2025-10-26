@@ -144,38 +144,74 @@ public class PlayerUIController extends BasePlayerController {
     }
 
     private void onSubtitleClicked(boolean enabled) {
-        fitVideoIntoDialog();
-
-        // First run
-        if (FormatItem.SUBTITLE_NONE.equals(getPlayerData().getLastSubtitleFormat())) {
-            onSubtitleLongClicked();
-            return;
-        }
-
-        // Only default in the list
-        if (getPlayer().getSubtitleFormats() == null || getPlayer().getSubtitleFormats().size() == 1) {
-            return;
-        }
-
-        FormatItem matchedFormat = null;
-
-        for (FormatItem item : getPlayerData().getLastSubtitleFormats()) {
-            if (getPlayer().getSubtitleFormats().contains(item)) {
-                matchedFormat = item;
-                break;
-            }
-        }
-
-        // Match found
-        if (matchedFormat != null) {
-            FormatItem format = enabled ? FormatItem.SUBTITLE_NONE : matchedFormat;
-            getPlayer().setFormat(format);
-            getPlayerData().setFormat(format);
-            getPlayer().setButtonState(R.id.lb_control_closed_captioning, !FormatItem.SUBTITLE_NONE.equals(matchedFormat) && !enabled ? PlayerUI.BUTTON_ON : PlayerUI.BUTTON_OFF);
-            enableSubtitleForChannel(!enabled);
+        android.util.Log.d("PlayerUIController", "onSubtitleClicked: enabled=" + enabled);
+        
+        // Check current subtitle state to determine toggle
+        FormatItem currentSubtitle = getPlayerData().getFormat(FormatItem.TYPE_SUBTITLE);
+        boolean currentlyEnabled = currentSubtitle != null && !FormatItem.SUBTITLE_NONE.equals(currentSubtitle);
+        android.util.Log.d("PlayerUIController", "Current subtitle enabled: " + currentlyEnabled);
+        
+        // Toggle based on current state
+        if (currentlyEnabled) {
+            // Currently on, turn off
+            android.util.Log.d("PlayerUIController", "Turning off captions");
+            getPlayer().setFormat(FormatItem.SUBTITLE_NONE);
+            getPlayerData().setFormat(FormatItem.SUBTITLE_NONE);
+            getPlayer().setButtonState(R.id.lb_control_closed_captioning, PlayerUI.BUTTON_OFF);
+            enableSubtitleForChannel(false);
+            getPlayer().showSubtitles(false); // Hide subtitle view
         } else {
-            // Match not found
-            onSubtitleLongClicked();
+            // Currently off, turn on
+            android.util.Log.d("PlayerUIController", "Turning on captions");
+            List<FormatItem> subtitleFormats = getPlayer().getSubtitleFormats();
+            android.util.Log.d("PlayerUIController", "Available subtitle formats: " + (subtitleFormats != null ? subtitleFormats.size() : "null"));
+            
+            if (subtitleFormats != null && !subtitleFormats.isEmpty()) {
+                // Log all available subtitle formats
+                for (int i = 0; i < subtitleFormats.size(); i++) {
+                    FormatItem item = subtitleFormats.get(i);
+                    android.util.Log.d("PlayerUIController", "Subtitle " + i + ": " + item.getLanguage() + ", isDefault=" + item.isDefault() + ", equals SUBTITLE_NONE=" + FormatItem.SUBTITLE_NONE.equals(item));
+                }
+                
+                // Find English subtitle format first, then fallback to any non-default
+                FormatItem selectedSubtitle = null;
+                
+                // First pass: Look for English subtitles
+                for (FormatItem item : subtitleFormats) {
+                    if (!item.isDefault() && !FormatItem.SUBTITLE_NONE.equals(item)) {
+                        String language = item.getLanguage();
+                        if (language != null && language.toLowerCase().contains("english")) {
+                            selectedSubtitle = item;
+                            android.util.Log.d("PlayerUIController", "Selected English subtitle: " + language);
+                            break;
+                        }
+                    }
+                }
+                
+                // Second pass: If no English found, use the first available non-default
+                if (selectedSubtitle == null) {
+                    for (FormatItem item : subtitleFormats) {
+                        if (!item.isDefault() && !FormatItem.SUBTITLE_NONE.equals(item)) {
+                            selectedSubtitle = item;
+                            android.util.Log.d("PlayerUIController", "Selected fallback subtitle: " + item.getLanguage());
+                            break;
+                        }
+                    }
+                }
+                
+                if (selectedSubtitle != null) {
+                    android.util.Log.d("PlayerUIController", "Setting subtitle format: " + selectedSubtitle.getLanguage());
+                    getPlayer().setFormat(selectedSubtitle);
+                    getPlayerData().setFormat(selectedSubtitle);
+                    getPlayer().setButtonState(R.id.lb_control_closed_captioning, PlayerUI.BUTTON_ON);
+                    enableSubtitleForChannel(true);
+                    getPlayer().showSubtitles(true); // Show subtitle view
+                } else {
+                    android.util.Log.w("PlayerUIController", "No suitable subtitle format found");
+                }
+            } else {
+                android.util.Log.w("PlayerUIController", "No subtitle formats available");
+            }
         }
     }
 

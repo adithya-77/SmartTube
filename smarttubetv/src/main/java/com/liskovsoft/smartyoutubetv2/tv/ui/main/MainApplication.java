@@ -10,6 +10,7 @@ import com.liskovsoft.smartyoutubetv2.common.app.views.AppDialogView;
 import com.liskovsoft.smartyoutubetv2.common.app.views.BrowseView;
 import com.liskovsoft.smartyoutubetv2.common.app.views.ChannelUploadsView;
 import com.liskovsoft.smartyoutubetv2.common.app.views.ChannelView;
+import com.liskovsoft.smartyoutubetv2.common.app.views.MovieDetailsView;
 import com.liskovsoft.smartyoutubetv2.common.app.views.PlaybackView;
 import com.liskovsoft.smartyoutubetv2.common.app.views.SearchView;
 import com.liskovsoft.smartyoutubetv2.common.app.views.SignInView;
@@ -21,12 +22,14 @@ import com.liskovsoft.smartyoutubetv2.tv.ui.browse.BrowseActivity;
 import com.liskovsoft.smartyoutubetv2.tv.ui.channel.ChannelActivity;
 import com.liskovsoft.smartyoutubetv2.tv.ui.channeluploads.ChannelUploadsActivity;
 import com.liskovsoft.smartyoutubetv2.tv.ui.dialogs.AppDialogActivity;
+import com.liskovsoft.smartyoutubetv2.tv.ui.moviedetails.MovieDetailsActivity;
 import com.liskovsoft.smartyoutubetv2.tv.ui.playback.PlaybackActivity;
 import com.liskovsoft.smartyoutubetv2.tv.ui.search.tags.SearchTagsActivity;
 import com.liskovsoft.smartyoutubetv2.tv.ui.signin.SignInActivity;
 import com.liskovsoft.smartyoutubetv2.tv.ui.webbrowser.WebBrowserActivity;
 
 import java.lang.Thread.UncaughtExceptionHandler;
+import com.liskovsoft.youtubeapi.service.GenreService;
 
 public class MainApplication extends MultiDexApplication { // fix: Didn't find class "com.google.firebase.provider.FirebaseInitProvider"
     static {
@@ -53,6 +56,9 @@ public class MainApplication extends MultiDexApplication { // fix: Didn't find c
 
         //setupGlobalExceptionHandler();
         setupViewManager();
+        
+        // Initialize GenreService with context for SQLite persistence
+        GenreService.instance().setContext(this);
     }
 
     private void setupViewManager() {
@@ -68,6 +74,7 @@ public class MainApplication extends MultiDexApplication { // fix: Didn't find c
         viewManager.register(AddDeviceView.class, AddDeviceActivity.class, BrowseActivity.class);
         viewManager.register(ChannelView.class, ChannelActivity.class, BrowseActivity.class);
         viewManager.register(ChannelUploadsView.class, ChannelUploadsActivity.class, BrowseActivity.class);
+        viewManager.register(MovieDetailsView.class, MovieDetailsActivity.class, BrowseActivity.class);
         viewManager.register(WebBrowserView.class, WebBrowserActivity.class, BrowseActivity.class);
     }
 

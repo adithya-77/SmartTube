@@ -126,10 +126,11 @@ public class ControlButtonPresenterSelector extends PresenterSelector {
                 vh.mFocusableView.sendAccessibilityEvent(
                         AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED);
 
-                // MODIFIED: enable control tooltips
-                if (tooltipsEnabled) {
-                    TooltipCompatHandler.setTooltipText(vh.mFocusableView, action.getLabel1());
-                }
+                // DISABLED: tooltips cause SurfaceFlinger crash on ARM v7a
+                // TooltipPopup causes coordinate overflow in BufferLayer::latchBuffer
+                // if (tooltipsEnabled) {
+                //     TooltipCompatHandler.setTooltipText(vh.mFocusableView, action.getLabel1());
+                // }
             }
         }
 

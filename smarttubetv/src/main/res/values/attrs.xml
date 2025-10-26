@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Missing styleable resources -->
+    <declare-styleable name="lbImageCardView">
+        <attr name="lbImageCardViewType" format="integer" />
+        <attr name="infoAreaBackground" format="reference|color" />
+    </declare-styleable>
+
+    <declare-styleable name="LeanbackTheme">
+        <attr name="imageCardViewStyle" format="reference" />
+    </declare-styleable>
+
+    <attr name="playbackControlsIconHighlightColor" format="reference|color" />
+    <attr name="playbackControlsActionIcons" format="reference" />
+
+    <declare-styleable name="lbPlaybackControlsActionIcons">
+        <attr name="high_quality" format="reference" />
+    </declare-styleable>
+
+    <!-- Missing attribute resources -->
+    <attr name="cardDefaultBackground" format="reference|color" />
+    <attr name="cardSelectedBackground" format="reference|color" />
+    <attr name="shelfBackground" format="reference|color" />
+    <attr name="brandColor" format="reference|color" />
+    <attr name="brandAccentColor" format="reference|color" />
+    <attr name="appLogo" format="reference" />
+    <attr name="cardProgressStyle" format="reference" />
+</resources>

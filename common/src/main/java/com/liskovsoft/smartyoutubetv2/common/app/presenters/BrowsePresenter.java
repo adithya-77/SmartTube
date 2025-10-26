@@ -187,24 +187,13 @@ public class BrowsePresenter extends BasePresenter<BrowseView> implements Sectio
         String country = LocaleUtility.getCurrentLocale(getContext()).getCountry();
         int uploadsType = getMainUIData().isUploadsOldLookEnabled() ? BrowseSection.TYPE_GRID : BrowseSection.TYPE_MULTI_GRID;
 
+        // Custom sections - only essential ones
         mSectionsMapping.put(MediaGroup.TYPE_HOME, new BrowseSection(MediaGroup.TYPE_HOME, getContext().getString(R.string.header_home), BrowseSection.TYPE_ROW, R.drawable.icon_home, false));
-        mSectionsMapping.put(MediaGroup.TYPE_SHORTS, new BrowseSection(MediaGroup.TYPE_SHORTS, getContext().getString(R.string.header_shorts), BrowseSection.TYPE_SHORTS_GRID, R.drawable.icon_shorts));
-        mSectionsMapping.put(MediaGroup.TYPE_TRENDING, new BrowseSection(MediaGroup.TYPE_TRENDING, getContext().getString(R.string.header_trending), BrowseSection.TYPE_ROW, R.drawable.icon_trending));
-        mSectionsMapping.put(MediaGroup.TYPE_KIDS_HOME, new BrowseSection(MediaGroup.TYPE_KIDS_HOME, getContext().getString(R.string.header_kids_home), BrowseSection.TYPE_ROW, R.drawable.icon_kids_home));
-        mSectionsMapping.put(MediaGroup.TYPE_SPORTS, new BrowseSection(MediaGroup.TYPE_SPORTS, getContext().getString(R.string.header_sports), BrowseSection.TYPE_ROW, R.drawable.icon_sports));
-        mSectionsMapping.put(MediaGroup.TYPE_LIVE, new BrowseSection(MediaGroup.TYPE_LIVE, getContext().getString(R.string.badge_live), BrowseSection.TYPE_ROW, R.drawable.icon_live));
-        mSectionsMapping.put(MediaGroup.TYPE_MY_VIDEOS, new BrowseSection(MediaGroup.TYPE_MY_VIDEOS, getContext().getString(R.string.my_videos), BrowseSection.TYPE_GRID, R.drawable.icon_playlist));
-        mSectionsMapping.put(MediaGroup.TYPE_GAMING, new BrowseSection(MediaGroup.TYPE_GAMING, getContext().getString(R.string.header_gaming), BrowseSection.TYPE_ROW, R.drawable.icon_gaming));
-        if (!Helpers.equalsAny(country, "RU", "BY")) {
-            mSectionsMapping.put(MediaGroup.TYPE_NEWS, new BrowseSection(MediaGroup.TYPE_NEWS, getContext().getString(R.string.header_news), BrowseSection.TYPE_ROW, R.drawable.icon_news));
-        }
-        mSectionsMapping.put(MediaGroup.TYPE_MUSIC, new BrowseSection(MediaGroup.TYPE_MUSIC, getContext().getString(R.string.header_music), BrowseSection.TYPE_ROW, R.drawable.icon_music));
-        mSectionsMapping.put(MediaGroup.TYPE_CHANNEL_UPLOADS, new BrowseSection(MediaGroup.TYPE_CHANNEL_UPLOADS, getContext().getString(R.string.header_channels), uploadsType, R.drawable.icon_channels, false));
-        mSectionsMapping.put(MediaGroup.TYPE_SUBSCRIPTIONS, new BrowseSection(MediaGroup.TYPE_SUBSCRIPTIONS, getContext().getString(R.string.header_subscriptions), BrowseSection.TYPE_GRID, R.drawable.icon_subscriptions, false));
-        mSectionsMapping.put(MediaGroup.TYPE_HISTORY, new BrowseSection(MediaGroup.TYPE_HISTORY, getContext().getString(R.string.header_history), BrowseSection.TYPE_GRID, R.drawable.icon_history, true));
         mSectionsMapping.put(MediaGroup.TYPE_USER_PLAYLISTS, new BrowseSection(MediaGroup.TYPE_USER_PLAYLISTS, getContext().getString(R.string.header_playlists), BrowseSection.TYPE_ROW, R.drawable.icon_playlist, false));
-        mSectionsMapping.put(MediaGroup.TYPE_NOTIFICATIONS, new BrowseSection(MediaGroup.TYPE_NOTIFICATIONS, getContext().getString(R.string.header_notifications), BrowseSection.TYPE_GRID, R.drawable.icon_notification, false));
-        mSectionsMapping.put(MediaGroup.TYPE_PLAYBACK_QUEUE, new BrowseSection(MediaGroup.TYPE_PLAYBACK_QUEUE, getContext().getString(R.string.playback_queue_category_title), BrowseSection.TYPE_GRID, R.drawable.icon_queue, false));
+        mSectionsMapping.put(MediaGroup.TYPE_HISTORY, new BrowseSection(MediaGroup.TYPE_HISTORY, getContext().getString(R.string.header_history), BrowseSection.TYPE_GRID, R.drawable.icon_history, true));
+        
+        // Removed sections:
+        // - Shorts, Trending, Kids Home, Sports, Live, My Videos, Gaming, News, Music, Channels, Subscriptions, Notifications, Playback Queue
 
         if (getSidebarService().isSettingsSectionEnabled()) {
             mSectionsMapping.put(MediaGroup.TYPE_SETTINGS, new BrowseSection(MediaGroup.TYPE_SETTINGS, getContext().getString(R.string.header_settings), BrowseSection.TYPE_SETTINGS_GRID, R.drawable.icon_settings));
@@ -212,22 +201,14 @@ public class BrowsePresenter extends BasePresenter<BrowseView> implements Sectio
     }
 
     private void initRowAndGridMapping() {
-        mRowMapping.put(MediaGroup.TYPE_HOME, getContentService().getHomeObserve());
-        mRowMapping.put(MediaGroup.TYPE_TRENDING, getContentService().getTrendingObserve());
-        mRowMapping.put(MediaGroup.TYPE_KIDS_HOME, getContentService().getKidsHomeObserve());
-        mRowMapping.put(MediaGroup.TYPE_SPORTS, getContentService().getSportsObserve());
-        mRowMapping.put(MediaGroup.TYPE_LIVE, getContentService().getLiveObserve());
-        mRowMapping.put(MediaGroup.TYPE_NEWS, getContentService().getNewsObserve());
-        mRowMapping.put(MediaGroup.TYPE_MUSIC, getContentService().getMusicObserve());
-        mRowMapping.put(MediaGroup.TYPE_GAMING, getContentService().getGamingObserve());
+        // Custom mappings - only essential sections
+        mRowMapping.put(MediaGroup.TYPE_HOME, getContentService().getHomeRowsObserve());
         mRowMapping.put(MediaGroup.TYPE_USER_PLAYLISTS, getContentService().getPlaylistRowsObserve());
 
-        mGridMapping.put(MediaGroup.TYPE_SHORTS, getContentService().getShortsObserve());
-        mGridMapping.put(MediaGroup.TYPE_SUBSCRIPTIONS, getContentService().getSubscriptionsObserve());
         mGridMapping.put(MediaGroup.TYPE_HISTORY, getContentService().getHistoryObserve());
-        mGridMapping.put(MediaGroup.TYPE_CHANNEL_UPLOADS, getContentService().getSubscribedChannelsByNewContentObserve());
-        mGridMapping.put(MediaGroup.TYPE_NOTIFICATIONS, getNotificationsService().getNotificationItemsObserve());
-        mGridMapping.put(MediaGroup.TYPE_MY_VIDEOS, getContentService().getMyVideosObserve());
+        
+        // Removed mappings for:
+        // - Trending, Kids Home, Sports, Live, News, Music, Gaming, Shorts, Subscriptions, Channels, Notifications, My Videos
     }
 
     private void initPinnedSections() {
@@ -420,14 +401,18 @@ public class BrowsePresenter extends BasePresenter<BrowseView> implements Sectio
             return;
         }
 
+        android.util.Log.d("BrowsePresenter", "onVideoItemClicked called for: " + (item != null ? item.getTitle() : "null"));
+        
         // Check that channels new look enabled and we're on the first columnAdd commentMore actions
         if (belongsToChannelUploadsMultiGrid(item)) {
             if (getMainUIData().isUploadsAutoLoadEnabled()) {
+                android.util.Log.d("BrowsePresenter", "Calling VideoActionPresenter for channel uploads");
                 VideoActionPresenter.instance(getContext()).apply(item);
             } else {
                 updateChannelUploadsMultiGrid(item);
             }
         } else {
+            android.util.Log.d("BrowsePresenter", "Calling VideoActionPresenter for regular video");
             VideoActionPresenter.instance(getContext()).apply(item);
         }
     }
@@ -470,6 +455,8 @@ public class BrowsePresenter extends BasePresenter<BrowseView> implements Sectio
         }
 
         VideoGroup group = item.getGroup();
+        
+        Log.d(TAG, "onScrollEnd called for video: " + item.getTitle() + ", group: " + (group != null ? group.getTitle() : "null"));
 
         continueGroup(group);
     }
@@ -1206,4 +1193,5 @@ public class BrowsePresenter extends BasePresenter<BrowseView> implements Sectio
             videoGroup.add(0, state.video);
         }
     }
+    
 }

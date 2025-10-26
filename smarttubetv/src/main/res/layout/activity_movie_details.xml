@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- Full Backdrop Image -->
+    <ImageView
+        android:id="@+id/movie_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="@drawable/card_placeholder" />
+
+    <!-- Gradient Overlay for Smooth Blend -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/smooth_blend_gradient" />
+
+    <!-- Content Layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <!-- Left Panel - Movie Information (40% width) -->
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:gravity="top">
+
+        <!-- Movie Title -->
+        <TextView
+            android:id="@+id/movie_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Movie Title"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="sans-serif"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+
+        <!-- Meta Info Line -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_vertical">
+
+            <!-- Release Year -->
+            <TextView
+                android:id="@+id/movie_release_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2025"
+                android:textColor="#CCCCCC"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="·"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Age Rating -->
+            <TextView
+                android:id="@+id/movie_age_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="U/A 13+"
+                android:textColor="#CCCCCC"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="·"
+                android:textColor="#666666"
+                android:textSize="14sp"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Runtime -->
+            <TextView
+                android:id="@+id/movie_runtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2h 30m"
+                android:textColor="#CCCCCC"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:layout_marginEnd="8dp" />
+
+
+        </LinearLayout>
+
+        <!-- Synopsis -->
+        <TextView
+            android:id="@+id/movie_overview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="A second chance at life brings Sandeep to Haritha's doorstep. As hearts meet across time and loss, new bonds begin to reshape his world."
+            android:textColor="#DDDDDD"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:lineSpacingMultiplier="1.2"
+            android:layout_marginBottom="20dp"
+            android:maxLines="6"
+            android:ellipsize="end"
+            android:minHeight="0dp" />
+
+        <!-- Genres -->
+        <LinearLayout
+            android:id="@+id/genres_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Family"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:background="@drawable/genre_chip"
+                android:padding="6dp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Comedy"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:background="@drawable/genre_chip"
+                android:padding="6dp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Drama"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:background="@drawable/genre_chip"
+                android:padding="6dp"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RomCom"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:background="@drawable/genre_chip"
+                android:padding="6dp" />
+
+        </LinearLayout>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
+
+            <!-- Play Button -->
+            <TextView
+                android:id="@+id/play_button"
+                style="@style/ButtonTextBlack"
+                android:layout_width="160dp"
+                android:layout_height="45dp"
+                android:text="Play"
+                android:drawableLeft="@android:drawable/ic_media_play"
+                android:drawablePadding="8dp"
+                android:drawableTint="#000000"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="20dp"
+                android:background="@drawable/play_button_rect_selector"
+                android:layout_marginBottom="12dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:nextFocusDown="@+id/trailer_button" />
+
+            <!-- Trailer Button -->
+            <TextView
+                android:id="@+id/trailer_button"
+                style="@style/ButtonTextBlack"
+                android:layout_width="160dp"
+                android:layout_height="45dp"
+                android:text="Trailer"
+                android:drawableLeft="@drawable/ic_trailer"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="20dp"
+                android:background="@drawable/play_button_rect_selector"
+                android:layout_marginBottom="12dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:nextFocusUp="@+id/play_button"
+                android:nextFocusDown="@+id/watchlist_button" />
+
+            <!-- Add to Watchlist Button -->
+            <TextView
+                android:id="@+id/watchlist_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="+"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:background="@drawable/secondary_button_selector"
+                android:focusable="true"
+                android:clickable="true"
+                android:nextFocusUp="@+id/trailer_button" />
+
+        </LinearLayout>
+
+
+        <!-- Rating Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="★"
+                android:textColor="#FFD700"
+                android:textSize="16sp"
+                android:layout_marginEnd="4dp" />
+
+            <TextView
+                android:id="@+id/movie_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8.5"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:layout_marginEnd="4dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/10"
+                android:textColor="#AAAAAA"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Right Panel - Empty space for backdrop visibility (60% width) -->
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="0.6"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+</FrameLayout>

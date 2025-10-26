@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/skeleton_overlay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:columnCount="4"
+    android:rowCount="3"
+    android:padding="16dp">
+
+    <!-- Row 1 -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <!-- Row 2 -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <!-- Row 3 -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_columnWeight="1"
+        android:layout_margin="8dp"
+        android:background="@drawable/skeleton_placeholder" />
+
+</GridLayout>

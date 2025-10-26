@@ -1,6 +1,8 @@
 package com.liskovsoft.smartyoutubetv2.tv.ui.browse.video;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.leanback.widget.OnItemViewSelectedListener;
@@ -13,6 +15,7 @@ import com.liskovsoft.sharedutils.helpers.Helpers;
 import com.liskovsoft.smartyoutubetv2.common.app.models.data.Video;
 import com.liskovsoft.smartyoutubetv2.common.app.models.data.VideoGroup;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.BrowsePresenter;
+import com.liskovsoft.smartyoutubetv2.tv.presenters.MovieDetailsVideoActionPresenter;
 import com.liskovsoft.smartyoutubetv2.common.app.presenters.interfaces.VideoGroupPresenter;
 import com.liskovsoft.smartyoutubetv2.common.misc.TickleManager;
 import com.liskovsoft.smartyoutubetv2.common.prefs.MainUIData;
@@ -62,6 +65,7 @@ public class VideoGridFragment extends GridFragment implements VideoSection {
             getMainFragmentAdapter().getFragmentHost().notifyDataReady(getMainFragmentAdapter());
         }
     }
+
 
     protected VideoGroupPresenter getMainPresenter() {
         return BrowsePresenter.instance(getContext());
@@ -257,7 +261,9 @@ public class VideoGridFragment extends GridFragment implements VideoSection {
                                   RowPresenter.ViewHolder rowViewHolder, Row row) {
 
             if (item instanceof Video) {
-                mMainPresenter.onVideoItemClicked((Video) item);
+                // Use custom presenter to open movie details instead of direct playback
+                android.util.Log.d("VideoGridFragment", "Opening movie details for: " + ((Video) item).getTitle());
+                MovieDetailsVideoActionPresenter.instance(getContext()).apply((Video) item);
             } else {
                 Toast.makeText(getActivity(), item.toString(), Toast.LENGTH_SHORT).show();
             }
@@ -278,11 +284,22 @@ public class VideoGridFragment extends GridFragment implements VideoSection {
         }
 
         private void checkScrollEnd(Video item) {
+            if (mGridAdapter == null) {
+                Log.d(TAG, "checkScrollEnd: mGridAdapter is null");
+                return;
+            }
+            
             int size = mGridAdapter.size();
             int index = mGridAdapter.indexOf(item);
+            int threshold = isShorts() ? ViewUtil.GRID_SCROLL_CONTINUE_NUM * 2 : ViewUtil.GRID_SCROLL_CONTINUE_NUM;
 
-            if (index > (size - (isShorts() ? ViewUtil.GRID_SCROLL_CONTINUE_NUM * 2 : ViewUtil.GRID_SCROLL_CONTINUE_NUM))) {
+            Log.d(TAG, "checkScrollEnd: size=" + size + ", index=" + index + ", threshold=" + threshold + ", item=" + (item != null ? item.getTitle() : "null"));
+
+            if (index > (size - threshold)) {
+                Log.d(TAG, "Triggering scroll end for item: " + item.getTitle());
                 mMainPresenter.onScrollEnd((Video) mGridAdapter.get(size - 1));
+            } else {
+                Log.d(TAG, "Not triggering scroll end: index=" + index + " <= (size=" + size + " - threshold=" + threshold + ") = " + (size - threshold));
             }
         }
     }

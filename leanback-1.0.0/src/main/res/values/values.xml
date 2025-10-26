@@ -683,7 +683,7 @@
     <dimen name="lb_details_description_title_padding_adjust_bottom">2dp</dimen>
     <dimen name="lb_details_description_title_padding_adjust_top">-1dp</dimen>
     <dimen name="lb_details_description_title_resized_text_size">28sp</dimen>
-    <dimen name="lb_details_description_title_text_size">34sp</dimen>
+    <dimen name="lb_details_description_title_text_size">24sp</dimen>
     <dimen name="lb_details_description_under_subtitle_baseline_margin">32dp</dimen>
     <dimen name="lb_details_description_under_title_baseline_margin">32dp</dimen>
     <dimen name="lb_details_overview_action_items_spacing">16dp</dimen>

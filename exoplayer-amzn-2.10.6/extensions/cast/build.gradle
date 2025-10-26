@@ -15,11 +15,13 @@ apply from: '../../constants.gradle'
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'com.google.android.exoplayer2.ext.cast'
+
     compileSdkVersion project.ext.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     defaultConfig {

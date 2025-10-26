@@ -1,5 +1,10 @@
 <resources>
 
+    <!-- Material Design color attributes -->
+    <attr name="colorAccent" format="color|reference" />
+    <attr name="colorPrimary" format="color|reference" />
+    <attr name="colorPrimaryDark" format="color|reference" />
+
     <attr name="MessageInput" format="reference" />
 
     <declare-styleable name="MessageInput">

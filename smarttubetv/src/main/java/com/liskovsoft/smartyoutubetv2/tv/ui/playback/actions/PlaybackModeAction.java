@@ -41,20 +41,22 @@ public class PlaybackModeAction extends MultiAction {
 
         mContext = context;
         Drawable[] drawables = new Drawable[7];
-        BitmapDrawable repeatNoneDrawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.action_mode_none);
-        BitmapDrawable repeatOneDrawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.action_mode_one);
-        BitmapDrawable repeatAllDrawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.action_mode_all);
-        BitmapDrawable repeatPauseDrawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.action_mode_pause);
-        BitmapDrawable repeatListDrawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.action_mode_list);
-        BitmapDrawable repeatShuffleDrawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.action_mode_shuffle);
-        BitmapDrawable reverseListDrawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.drawable.action_mode_reverse_list);
-        drawables[INDEX_NONE] = ActionHelpers.createDrawable(context, repeatNoneDrawable, selectionColor);
-        drawables[INDEX_ONE] = ActionHelpers.createDrawable(context, repeatOneDrawable, selectionColor);
-        drawables[INDEX_ALL] = ActionHelpers.createDrawable(context, repeatAllDrawable, selectionColor);
-        drawables[INDEX_PAUSE] = ActionHelpers.createDrawable(context, repeatPauseDrawable, selectionColor);
-        drawables[INDEX_LIST] = ActionHelpers.createDrawable(context, repeatListDrawable, selectionColor);
-        drawables[INDEX_SHUFFLE] = ActionHelpers.createDrawable(context, repeatShuffleDrawable, selectionColor);
-        drawables[INDEX_REVERSE_LIST] = ActionHelpers.createDrawable(context, reverseListDrawable, selectionColor);
+        Drawable repeatNoneDrawable = ContextCompat.getDrawable(context, R.drawable.action_mode_none);
+        Drawable repeatOneDrawable = ContextCompat.getDrawable(context, R.drawable.action_mode_one);
+        Drawable repeatAllDrawable = ContextCompat.getDrawable(context, R.drawable.action_mode_all);
+        Drawable repeatPauseDrawable = ContextCompat.getDrawable(context, R.drawable.action_mode_pause);
+        Drawable repeatListDrawable = ContextCompat.getDrawable(context, R.drawable.action_mode_list);
+        Drawable repeatShuffleDrawable = ContextCompat.getDrawable(context, R.drawable.action_mode_shuffle);
+        Drawable reverseListDrawable = ContextCompat.getDrawable(context, R.drawable.action_mode_reverse_list);
+        
+        // Handle both BitmapDrawable and VectorDrawable
+        drawables[INDEX_NONE] = createDrawableWithColor(context, repeatNoneDrawable, selectionColor);
+        drawables[INDEX_ONE] = createDrawableWithColor(context, repeatOneDrawable, selectionColor);
+        drawables[INDEX_ALL] = createDrawableWithColor(context, repeatAllDrawable, selectionColor);
+        drawables[INDEX_PAUSE] = createDrawableWithColor(context, repeatPauseDrawable, selectionColor);
+        drawables[INDEX_LIST] = createDrawableWithColor(context, repeatListDrawable, selectionColor);
+        drawables[INDEX_SHUFFLE] = createDrawableWithColor(context, repeatShuffleDrawable, selectionColor);
+        drawables[INDEX_REVERSE_LIST] = createDrawableWithColor(context, reverseListDrawable, selectionColor);
         setDrawables(drawables);
 
         String[] labels = new String[drawables.length];
@@ -79,4 +81,26 @@ public class PlaybackModeAction extends MultiAction {
     //
     //    super.setLabels(labels);
     //}
+    
+    /**
+     * Helper method to create drawable with color, handling both BitmapDrawable and VectorDrawable
+     */
+    private Drawable createDrawableWithColor(Context context, Drawable drawable, int color) {
+        if (drawable == null) {
+            return null;
+        }
+        
+        if (drawable instanceof BitmapDrawable) {
+            // Handle bitmap drawables
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            return ActionHelpers.createDrawable(context, bitmapDrawable, color);
+        } else {
+            // Handle vector drawables and other drawable types
+            Drawable coloredDrawable = drawable.mutate();
+            if (color != 0) {
+                coloredDrawable.setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
+            }
+            return coloredDrawable;
+        }
+    }
 }
